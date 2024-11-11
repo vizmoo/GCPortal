@@ -1,12 +1,21 @@
 import { observer } from "mobx-react-lite"
 import { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, ViewStyle } from "react-native"
+import {
+  TextInput,
+  TextStyle,
+  ViewStyle,
+  ImageStyle,
+  View,
+  Image,
+  TouchableOpacity,
+} from "react-native"
 import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/utils/useAppTheme"
 
+// this is the code for the login screen
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_props) {
@@ -19,6 +28,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const {
     authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError },
   } = useStores()
+  const [hasEmailBeenFocused, setHasEmailBeenFocused] = useState(false)
+  const [hasPasswordBeenFocused, setHasPasswordBeenFocused] = useState(false)
 
   const {
     themed,
@@ -26,17 +37,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   } = useAppTheme()
 
   useEffect(() => {
-    // Here is where you could fetch credentials from keychain or storage
-    // and pre-fill the form fields.
-    setAuthEmail("ignite@infinite.red")
-    setAuthPassword("ign1teIsAwes0m3")
-
-    // Return a "cleanup" function that React will run when the component unmounts
-    return () => {
-      setAuthPassword("")
-      setAuthEmail("")
-    }
-  }, [setAuthEmail])
+    setIsAuthPasswordHidden(() => (hasPasswordBeenFocused ? true : false))
+  }, [hasPasswordBeenFocused])
 
   const error = isSubmitted ? validationError : ""
 
@@ -75,78 +77,143 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   return (
     <Screen
       preset="auto"
-      contentContainerStyle={themed($screenContentContainer)}
+      contentContainerStyle={themed($screenContainer)}
       safeAreaEdges={["top", "bottom"]}
     >
-      <Text testID="login-heading" tx="loginScreen:logIn" preset="heading" style={themed($logIn)} />
-      <Text tx="loginScreen:enterDetails" preset="subheading" style={themed($enterDetails)} />
-      {attemptsCount > 2 && (
-        <Text tx="loginScreen:hint" size="sm" weight="light" style={themed($hint)} />
-      )}
+      <View style={themed($loginContainer)}>
+        <Image style={themed($logo)} source={require("assets/images/GrooveCatcher Logo.png")} />
+        <Text testID="login-heading" preset="heading" style={themed($welcome)}>
+          Welcome Back!
+        </Text>
+        <Text preset="subheading" style={themed($subheading)}>
+          Sign in to your account using
+        </Text>
 
-      <TextField
-        value={authEmail}
-        onChangeText={setAuthEmail}
-        containerStyle={themed($textField)}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        labelTx="loginScreen:emailFieldLabel"
-        placeholderTx="loginScreen:emailFieldPlaceholder"
-        helper={error}
-        status={error ? "error" : undefined}
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
-      />
+        <View style={themed($ssoContainer)}>
+          <TouchableOpacity style={themed($ssoRow)}>
+            <Image style={themed($ssoLogo)} source={require("assets/images/Google-Logo.png")} />
+            <Text style={$ssoText}>Google</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={themed($ssoRow)}>
+            <Image style={themed($ssoLogo)} source={require("assets/images/Google-Logo.png")} />
+            <Text style={$ssoText}>Google</Text>
+          </TouchableOpacity>
+        </View>
 
-      <TextField
-        ref={authPasswordInput}
-        value={authPassword}
-        onChangeText={setAuthPassword}
-        containerStyle={themed($textField)}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        labelTx="loginScreen:passwordFieldLabel"
-        placeholderTx="loginScreen:passwordFieldPlaceholder"
-        onSubmitEditing={login}
-        RightAccessory={PasswordRightAccessory}
-      />
+        <View style={themed($divider)}>
+          <View style={themed($dividerLine)} />
+          <Text style={themed($subheading)}> or </Text>
+          <View style={themed($dividerLine)} />
+        </View>
 
-      <Button
-        testID="login-button"
-        tx="loginScreen:tapToLogIn"
-        style={themed($tapButton)}
-        preset="reversed"
-        onPress={login}
-      />
+        <TextField
+          value={authEmail}
+          onChangeText={setAuthEmail}
+          containerStyle={themed($textField)}
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          helper={error}
+          status={error ? "error" : undefined}
+          onSubmitEditing={() => authPasswordInput.current?.focus()}
+          onFocus={() => setHasEmailBeenFocused(true)}
+          placeholder={hasEmailBeenFocused ? "" : "Email"}
+        />
+        <TextField
+          ref={authPasswordInput}
+          value={authPassword}
+          onChangeText={setAuthPassword}
+          containerStyle={themed($textField)}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          onSubmitEditing={login}
+          RightAccessory={PasswordRightAccessory}
+          onFocus={() => setHasPasswordBeenFocused(true)}
+          placeholder={hasPasswordBeenFocused ? "" : "Password"}
+        />
+        <Button testID="login-button" style={themed($tapButton)} preset="reversed" onPress={login}>
+          Sign in
+        </Button>
+      </View>
+      <View style={themed($heroImgContainer)}></View>
     </Screen>
   )
 })
 
-const $screenContentContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+// here's the styling
+// syntax is interesting so I'll have to look more into this
+const $screenContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  display: "flex",
+  flexDirection: "row",
+  width: "100%",
+  height: "100%",
+})
+const $loginContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   paddingVertical: spacing.xxl,
   paddingHorizontal: spacing.lg,
+  display: "flex",
+  alignContent: "center",
+  alignItems: "center",
+  alignSelf: "center",
+  width: "50%",
 })
-
-const $logIn: ThemedStyle<TextStyle> = ({ spacing }) => ({
-  marginBottom: spacing.sm,
-})
-
-const $enterDetails: ThemedStyle<TextStyle> = ({ spacing }) => ({
-  marginBottom: spacing.lg,
-})
-
-const $hint: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
-  color: colors.tint,
-  marginBottom: spacing.md,
-})
-
+const $welcome: ThemedStyle<TextStyle> = ({ spacing }) => ({})
+const $subheading: ThemedStyle<TextStyle> = ({ spacing }) => ({})
 const $textField: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  marginBottom: spacing.lg,
+  marginBottom: spacing.md,
+  width: "75%",
 })
-
 const $tapButton: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  marginTop: spacing.xs,
+  width: "50%",
 })
+const $logo: ThemedStyle<ImageStyle> = ({ spacing }) => ({
+  marginBottom: spacing.md,
+  resizeMode: "contain",
+  height: 100,
+})
+const $ssoContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  width: "75%",
+})
+const $ssoLogo: ThemedStyle<ImageStyle> = ({}) => ({
+  resizeMode: "contain",
+  height: 25,
+  width: 25,
+})
+const $ssoRow: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
+  marginTop: spacing.md,
+  width: "100%",
+  backgroundColor: colors.palette.darkWhite,
+  height: 40,
+  alignContent: "center",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: spacing.lg,
+  display: "flex",
+  flexDirection: "row",
+  borderRadius: 64,
+})
+const $ssoText = {
+  color: "black",
+}
+const $divider: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  display: "flex",
+  flexDirection: "row",
+  width: "70%",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: 30,
+  marginVertical: spacing.md,
+})
+const $dividerLine: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.palette.darkGrey,
+  height: 1,
+  flex: 1,
+})
+const $heroImgContainer: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.palette.yellowAccent,
+  width: "50%",
+})
+const $heroImage: ThemedStyle<ImageStyle> = ({}) => ({})

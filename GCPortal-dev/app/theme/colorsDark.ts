@@ -33,18 +33,27 @@ const palette = {
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
+
+  purpleAccent: "#63309A",
+  darkPurple: '#170134',
+  yellowAccent: '#F8BE00',
+  plainWhite: '#FFFFFF',
+  darkWhite: '#EAEEF1', // lol
+  plainBlack: '#000000',
+  darkGrey: '#8D8D8D'
 } as const
 
 export const colors = {
   palette,
   transparent: "rgba(0, 0, 0, 0)",
-  text: palette.neutral800,
-  textDim: palette.neutral600,
-  background: palette.neutral200,
-  border: palette.neutral400,
-  tint: palette.primary500,
-  tintInactive: palette.neutral300,
+  text: palette.plainWhite,
+  textDim: palette.darkGrey,
+  background: palette.darkPurple,
+  border: palette.darkWhite,
+  tint: palette.purpleAccent,
+  tintInactive: palette.darkGrey,
   separator: palette.neutral300,
   error: palette.angry500,
   errorBackground: palette.angry100,
+  secondaryAccent: palette.yellowAccent,
 } as const
