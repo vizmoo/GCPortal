@@ -1,3 +1,5 @@
+// define our colors here
+// these are the colors we will use across the app..
 const palette = {
   neutral100: "#FFFFFF",
   neutral200: "#F4F2F1",
@@ -33,6 +35,14 @@ const palette = {
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
+
+  purpleAccent: "#63309A",
+  darkPurple: '#170134',
+  yellowAccent: '#F8BE00',
+  plainWhite: '#FFFFFF',
+  darkWhite: '#EAEEF1', // lol
+  plainBlack: '#000000',
+  darkGrey: '#8D8D8D',
 } as const
 
 export const colors = {
@@ -49,31 +59,31 @@ export const colors = {
   /**
    * The default text color in many components.
    */
-  text: palette.neutral800,
+  text: palette.plainBlack,
   /**
    * Secondary text information.
    */
-  textDim: palette.neutral600,
+  textDim: palette.darkGrey,
   /**
    * The default color of the screen background.
    */
-  background: palette.neutral200,
+  background: palette.plainWhite,
   /**
    * The default border color.
    */
-  border: palette.neutral400,
+  border: palette.darkWhite,
   /**
    * The main tinting color.
    */
-  tint: palette.primary500,
+  tint: palette.purpleAccent,
   /**
    * The inactive tinting color.
    */
-  tintInactive: palette.neutral300,
+  tintInactive: palette.darkWhite,
   /**
    * A subtle color used for lines.
    */
-  separator: palette.neutral300,
+  separator: palette.darkWhite,
   /**
    * Error messages.
    */
@@ -82,4 +92,5 @@ export const colors = {
    * Error Background.
    */
   errorBackground: palette.angry100,
+  secondaryAccent: palette.yellowAccent,
 } as const

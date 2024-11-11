@@ -249,9 +249,8 @@ const $labelStyle: ThemedStyle<TextStyle> = ({ spacing }) => ({
 const $inputWrapperStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
   alignItems: "flex-start",
   borderWidth: 1,
-  borderRadius: 4,
-  backgroundColor: colors.palette.neutral200,
-  borderColor: colors.palette.neutral400,
+  borderRadius: 25,
+  backgroundColor: colors.palette.darkWhite,
   overflow: "hidden",
 })
 
@@ -259,7 +258,7 @@ const $inputStyle: ThemedStyle<ViewStyle> = ({ colors, typography, spacing }) =>
   flex: 1,
   alignSelf: "stretch",
   fontFamily: typography.primary.normal,
-  color: colors.text,
+  color: colors.palette.darkGrey,
   fontSize: 16,
   height: 24,
   // https://github.com/facebook/react-native/issues/21720#issuecomment-532642093

@@ -177,8 +177,8 @@ export function Button(props: ButtonProps) {
 }
 
 const $baseViewStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  minHeight: 56,
-  borderRadius: 4,
+  minHeight: 40,
+  borderRadius: 32,
   justifyContent: "center",
   alignItems: "center",
   paddingVertical: spacing.sm,
@@ -218,25 +218,21 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
   filled: [
     $styles.row,
     $baseViewStyle,
-    ({ colors }) => ({ backgroundColor: colors.palette.neutral300 }),
+    ({ colors }) => ({ backgroundColor: colors.palette.purpleAccent }),
   ],
-  reversed: [
-    $styles.row,
-    $baseViewStyle,
-    ({ colors }) => ({ backgroundColor: colors.palette.neutral800 }),
-  ],
+  reversed: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.tint })],
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [$baseTextStyle],
   filled: [$baseTextStyle],
-  reversed: [$baseTextStyle, ({ colors }) => ({ color: colors.palette.neutral100 })],
+  reversed: [$baseTextStyle, ({ colors }) => ({ color: colors.text })],
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
-  default: ({ colors }) => ({ backgroundColor: colors.palette.neutral200 }),
-  filled: ({ colors }) => ({ backgroundColor: colors.palette.neutral400 }),
-  reversed: ({ colors }) => ({ backgroundColor: colors.palette.neutral700 }),
+  default: ({ colors }) => ({ backgroundColor: colors.tintInactive }),
+  filled: ({ colors }) => ({ backgroundColor: colors.tintInactive }),
+  reversed: ({ colors }) => ({ backgroundColor: colors.tintInactive }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
