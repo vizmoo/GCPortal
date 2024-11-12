@@ -220,7 +220,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
           placeholder={hasPasswordBeenFocused ? "" : "Password"}
         />
         <Button testID="login-button" style={themed($tapButton)} preset="reversed" onPress={login}>
-          Sign in
+          <Text style={{ color: "white" }}>Sign in</Text>
         </Button>
       </View>
       <View style={themed($heroImgContainer)}></View>
