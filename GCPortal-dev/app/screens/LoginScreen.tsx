@@ -8,6 +8,8 @@ import {
   View,
   Image,
   TouchableOpacity,
+  Dimensions,
+  ScaledSize,
 } from "react-native"
 import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { useStores } from "../models"
@@ -30,6 +32,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   } = useStores()
   const [hasEmailBeenFocused, setHasEmailBeenFocused] = useState(false)
   const [hasPasswordBeenFocused, setHasPasswordBeenFocused] = useState(false)
+  const [screenWidth, setScreenWidth] = useState(Dimensions.get("window").width)
 
   const {
     themed,
@@ -39,6 +42,12 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   useEffect(() => {
     setIsAuthPasswordHidden(() => (hasPasswordBeenFocused ? true : false))
   }, [hasPasswordBeenFocused])
+
+  useEffect(() => {
+    const onChange = ({ window }: { window: ScaledSize }) => setScreenWidth(window.width)
+    const subscription = Dimensions.addEventListener("change", onChange)
+    return () => subscription?.remove()
+  }, [])
 
   const error = isSubmitted ? validationError : ""
 
@@ -73,6 +82,82 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       },
     [isAuthPasswordHidden, colors.palette.neutral800],
   )
+
+  const $screenContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+    display: "flex",
+    flexDirection: screenWidth > 900 ? "row" : "column",
+    width: "100%",
+    height: "100%",
+  })
+  const $loginContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.lg,
+    display: "flex",
+    alignContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    justifyContent: "center",
+    width: screenWidth > 900 ? "50%" : "100%",
+    height: screenWidth > 900 ? "100%" : "80%",
+  })
+  const $welcome: ThemedStyle<TextStyle> = ({ spacing }) => ({})
+  const $subheading: ThemedStyle<TextStyle> = ({ spacing }) => ({})
+  const $textField: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+    marginBottom: spacing.md,
+    width: "75%",
+  })
+  const $tapButton: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+    width: "50%",
+  })
+  const $logo: ThemedStyle<ImageStyle> = ({ spacing }) => ({
+    marginBottom: spacing.md,
+    resizeMode: "contain",
+    height: 100,
+  })
+  const $ssoContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+    width: "75%",
+  })
+  const $ssoLogo: ThemedStyle<ImageStyle> = ({}) => ({
+    resizeMode: "contain",
+    height: 25,
+    width: 25,
+  })
+  const $ssoRow: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
+    marginTop: spacing.md,
+    width: "100%",
+    backgroundColor: colors.palette.darkWhite,
+    height: 40,
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.lg,
+    display: "flex",
+    flexDirection: "row",
+    borderRadius: 64,
+  })
+  const $ssoText = {
+    color: "black",
+  }
+  const $divider: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+    display: "flex",
+    flexDirection: "row",
+    width: "70%",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 30,
+    marginVertical: spacing.md,
+  })
+  const $dividerLine: ThemedStyle<ViewStyle> = ({ colors }) => ({
+    backgroundColor: colors.palette.darkGrey,
+    height: 1,
+    flex: 1,
+  })
+  const $heroImgContainer: ThemedStyle<ViewStyle> = ({ colors }) => ({
+    backgroundColor: colors.palette.yellowAccent,
+    width: screenWidth > 900 ? "50%" : "100%",
+    height: screenWidth > 900 ? "100%" : "20%",
+  })
+  const $heroImage: ThemedStyle<ImageStyle> = ({}) => ({})
 
   return (
     <Screen
@@ -142,78 +227,3 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
     </Screen>
   )
 })
-
-// here's the styling
-// syntax is interesting so I'll have to look more into this
-const $screenContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  display: "flex",
-  flexDirection: "row",
-  width: "100%",
-  height: "100%",
-})
-const $loginContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  paddingVertical: spacing.xxl,
-  paddingHorizontal: spacing.lg,
-  display: "flex",
-  alignContent: "center",
-  alignItems: "center",
-  alignSelf: "center",
-  width: "50%",
-})
-const $welcome: ThemedStyle<TextStyle> = ({ spacing }) => ({})
-const $subheading: ThemedStyle<TextStyle> = ({ spacing }) => ({})
-const $textField: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  marginBottom: spacing.md,
-  width: "75%",
-})
-const $tapButton: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  width: "50%",
-})
-const $logo: ThemedStyle<ImageStyle> = ({ spacing }) => ({
-  marginBottom: spacing.md,
-  resizeMode: "contain",
-  height: 100,
-})
-const $ssoContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  width: "75%",
-})
-const $ssoLogo: ThemedStyle<ImageStyle> = ({}) => ({
-  resizeMode: "contain",
-  height: 25,
-  width: 25,
-})
-const $ssoRow: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
-  marginTop: spacing.md,
-  width: "100%",
-  backgroundColor: colors.palette.darkWhite,
-  height: 40,
-  alignContent: "center",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: spacing.lg,
-  display: "flex",
-  flexDirection: "row",
-  borderRadius: 64,
-})
-const $ssoText = {
-  color: "black",
-}
-const $divider: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  display: "flex",
-  flexDirection: "row",
-  width: "70%",
-  justifyContent: "center",
-  alignItems: "center",
-  gap: 30,
-  marginVertical: spacing.md,
-})
-const $dividerLine: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.palette.darkGrey,
-  height: 1,
-  flex: 1,
-})
-const $heroImgContainer: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.palette.yellowAccent,
-  width: "50%",
-})
-const $heroImage: ThemedStyle<ImageStyle> = ({}) => ({})
