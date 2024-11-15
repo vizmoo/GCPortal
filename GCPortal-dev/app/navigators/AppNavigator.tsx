@@ -4,6 +4,7 @@
  * Generally speaking, it will contain an auth flow (registration, login, forgot password)
  * and a "main" flow which the user will use once logged in.
  */
+import React from "react"
 import { NavigationContainer, NavigatorScreenParams } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import { observer } from "mobx-react-lite"
@@ -14,7 +15,6 @@ import { DemoNavigator, DemoTabParamList } from "./DemoNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { useAppTheme, useThemeProvider } from "@/utils/useAppTheme"
 import { ComponentProps } from "react"
-
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
  * as well as what properties (if any) they might take when navigating to them.
@@ -32,10 +32,9 @@ export type AppStackParamList = {
   Welcome: undefined
   Login: undefined
   Demo: NavigatorScreenParams<DemoTabParamList>
-  // 🔥 Your screens go here
-  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  PlayerSelection: undefined
+  AddPlayer: undefined
 }
-
 /**
  * This is a list of all the route names that will exit the app if the back button
  * is pressed while in that screen. Only affects Android.
@@ -46,7 +45,6 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
   AppStackParamList,
   T
 >
-
 // Documentation: https://reactnavigation.org/docs/stack-navigator/
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
@@ -54,7 +52,7 @@ const AppStack = observer(function AppStack() {
   const {
     authenticationStore: { isAuthenticated },
   } = useStores()
-
+  
   const {
     theme: { colors },
   } = useAppTheme()
@@ -68,12 +66,14 @@ const AppStack = observer(function AppStack() {
           backgroundColor: colors.background,
         },
       }}
-      initialRouteName={isAuthenticated ? "Welcome" : "Login"}
+      // Always set Login as the initial route, using isAuthenticated for conditional navigation
+      initialRouteName={isAuthenticated ? "PlayerSelection" : "Login"}
     >
       {isAuthenticated ? (
         <>
+          <Stack.Screen name="PlayerSelection" component={Screens.PlayerSelectionScreen} />
+          <Stack.Screen name="AddPlayer" component={Screens.AddPlayerScreen} />
           <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
-
           <Stack.Screen name="Demo" component={DemoNavigator} />
         </>
       ) : (
@@ -81,9 +81,6 @@ const AppStack = observer(function AppStack() {
           <Stack.Screen name="Login" component={Screens.LoginScreen} />
         </>
       )}
-
-      {/** 🔥 Your screens go here */}
-      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 })
@@ -93,7 +90,7 @@ export interface NavigationProps extends Partial<ComponentProps<typeof Navigatio
 export const AppNavigator = observer(function AppNavigator(props: NavigationProps) {
   const { themeScheme, navigationTheme, setThemeContextOverride, ThemeProvider } =
     useThemeProvider()
-
+  
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName))
 
   return (
