@@ -34,6 +34,11 @@ export type AppStackParamList = {
   Demo: NavigatorScreenParams<DemoTabParamList>
   PlayerSelection: undefined
   AddPlayer: undefined
+  Dashboard: {
+    playerId: number
+    playerName: string
+    playerColor: string
+  }
 }
 /**
  * This is a list of all the route names that will exit the app if the back button
@@ -41,12 +46,12 @@ export type AppStackParamList = {
  */
 const exitRoutes = Config.exitRoutes
 
-export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStackScreenProps<
-  AppStackParamList,
-  T
->
+export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStackScreenProps<AppStackParamList, T>
+type ScreenComponentType<T extends keyof AppStackParamList> = React.ComponentType<NativeStackScreenProps<AppStackParamList, T>>
+
 // Documentation: https://reactnavigation.org/docs/stack-navigator/
 const Stack = createNativeStackNavigator<AppStackParamList>()
+
 
 const AppStack = observer(function AppStack() {
   const {
@@ -73,6 +78,7 @@ const AppStack = observer(function AppStack() {
         <>
           <Stack.Screen name="PlayerSelection" component={Screens.PlayerSelectionScreen} />
           <Stack.Screen name="AddPlayer" component={Screens.AddPlayerScreen} />
+          <Stack.Screen name="Dashboard" component={Screens.DashboardScreen as ScreenComponentType<"Dashboard">} />
           <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
           <Stack.Screen name="Demo" component={DemoNavigator} />
         </>

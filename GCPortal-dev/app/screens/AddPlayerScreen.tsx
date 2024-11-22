@@ -1,19 +1,18 @@
 import { FC, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { View, TextInput, TouchableOpacity, Text as RNText, ViewStyle, TextStyle, ScrollView } from "react-native"
+import { View, TextInput, TouchableOpacity, Text as RNText, ViewStyle, TextStyle, ScrollView, Platform } from "react-native"
 import { AppStackScreenProps } from "@/navigators"
 import { Screen, Text } from "@/components"
 import { useNavigation } from "@react-navigation/native"
-import { profiles, colors } from "./PlayerSelectionScreen"
+import { profiles } from "./PlayerSelectionScreen"
+import { colors } from "../theme/colors"
 
 interface AddPlayerScreenProps extends AppStackScreenProps<"AddPlayer"> {}
 
 export const AddPlayerScreen: FC<AddPlayerScreenProps> = observer(function AddPlayerScreen() {
   const navigation = useNavigation()
   const [playerName, setPlayerName] = useState("")
-  const [pin, setPin] = useState("")
-  const [confirmPin, setConfirmPin] = useState("")
-  const [selectedColor, setSelectedColor] = useState(colors[0])
+  const [selectedColor, setSelectedColor] = useState<(typeof colors.profileColors)[number]>(colors.profileColors[0])
   const [error, setError] = useState("")
 
   const validateForm = () => {
@@ -21,24 +20,15 @@ export const AddPlayerScreen: FC<AddPlayerScreenProps> = observer(function AddPl
       setError("Please enter a player name")
       return false
     }
-    if (pin.length < 4) {
-      setError("PIN must be at least 4 digits")
-      return false
-    }
-    if (pin !== confirmPin) {
-      setError("PINs do not match")
-      return false
-    }
     return true
   }
 
   const handleAddPlayer = () => {
     if (validateForm()) {
-      profiles.splice(profiles.length - 1, 0, {
+      profiles.push({
         id: profiles.length + 2,
         name: playerName,
         color: selectedColor,
-        pin: pin,
       })
       navigation.goBack()
     }
@@ -66,43 +56,9 @@ export const AddPlayerScreen: FC<AddPlayerScreenProps> = observer(function AddPl
         </View>
 
         <View style={$inputWrapper}>
-          <Text text="PIN" style={$label} />
-          <TextInput
-            style={$input}
-            placeholder="Enter PIN"
-            placeholderTextColor={'#D3D3D3'}
-            value={pin}
-            onChangeText={(text) => {
-              setPin(text)
-              setError("")
-            }}
-            keyboardType="numeric"
-            secureTextEntry
-            maxLength={4}
-          />
-        </View>
-
-        <View style={$inputWrapper}>
-          <Text text="Confirm PIN" style={$label} />
-          <TextInput
-            style={$input}
-            placeholder="Confirm PIN"
-            placeholderTextColor={'#D3D3D3'}
-            value={confirmPin}
-            onChangeText={(text) => {
-              setConfirmPin(text)
-              setError("")
-            }}
-            keyboardType="numeric"
-            secureTextEntry
-            maxLength={4}
-          />
-        </View>
-
-        <View style={$inputWrapper}>
           <Text text="Choose Color" style={$label} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={$colorContainer}>
-            {colors.map((color) => (
+            {colors.profileColors.map((color) => (
               <TouchableOpacity
                 key={color}
                 style={[
@@ -115,10 +71,14 @@ export const AddPlayerScreen: FC<AddPlayerScreenProps> = observer(function AddPl
             ))}
           </ScrollView>
         </View>
-
-        <TouchableOpacity onPress={handleAddPlayer} style={$button}>
-          <RNText style={$buttonText}>Add Player</RNText>
-        </TouchableOpacity>
+        <View style={$buttonContainer}>
+          <TouchableOpacity onPress={handleAddPlayer} style={$addButton}>
+            <RNText style={$addButtonText}>Add Player</RNText>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={$cancelButton}>
+            <RNText style={$cancelButtonText}>Cancel</RNText>
+          </TouchableOpacity>
+        </View>
       </View>
     </Screen>
   )
@@ -126,60 +86,129 @@ export const AddPlayerScreen: FC<AddPlayerScreenProps> = observer(function AddPl
 
 const $root: ViewStyle = {
   flex: 1,
-  padding: 20,
+  padding: Platform.select({
+    ios: 16,
+    android: 16,
+    default: 20
+  }),
   backgroundColor: "white",
 }
 
 const $contentContainer: ViewStyle = {
   flex: 1,
   alignItems: "center",
-  paddingTop: 20,
+  paddingTop: Platform.select({
+    ios: "15%",
+    android: "15%",
+    default: "5%"
+  }),
 }
 
 const $title: TextStyle = {
-  fontSize: 24,
+  fontSize: Platform.select({
+    ios: 20,
+    android: 20,
+    default: 24
+  }),
   fontWeight: "bold",
-  marginBottom: 20,
+  marginBottom: Platform.select({
+    ios: 16,
+    android: 16,
+    default: 20
+  }),
   color: "black",
 }
 
 const $errorText: TextStyle = {
   color: "red",
-  marginBottom: 10,
+  marginBottom: Platform.select({
+    ios: 8,
+    android: 8,
+    default: 10
+  }),
   textAlign: "center",
 }
 
 const $inputWrapper: ViewStyle = {
-  marginBottom: 20,
+  marginBottom: Platform.select({
+    ios: 16,
+    android: 16,
+    default: 20
+  }),
   width: "100%",
-  maxWidth: 300,
+  maxWidth: Platform.select({
+    ios: 280,
+    android: 280,
+    default: 300
+  }),
 }
 
 const $label: TextStyle = {
-  fontSize: 16,
-  marginBottom: 10,
+  fontSize: Platform.select({
+    ios: 14,
+    android: 14,
+    default: 16
+  }),
+  marginBottom: Platform.select({
+    ios: 8,
+    android: 8,
+    default: 10
+  }),
   color: "black",
 }
 
 const $input: TextStyle = {
   width: "100%",
-  height: 40,
+  height: Platform.select({
+    ios: 36,
+    android: 36,
+    default: 40
+  }),
   borderColor: "gray",
   borderWidth: 1,
   borderRadius: 5,
-  paddingLeft: 10,
+  paddingLeft: Platform.select({
+    ios: 8,
+    android: 8,
+    default: 10
+  }),
+  fontSize: Platform.select({
+    ios: 14,
+    android: 14,
+    default: 16
+  }),
 }
 
 const $colorContainer: ViewStyle = {
   flexDirection: "row",
-  marginBottom: 10,
+  marginBottom: Platform.select({
+    ios: 8,
+    android: 8,
+    default: 10
+  }),
 }
 
 const $colorCircle: ViewStyle = {
-  width: 40,
-  height: 40,
-  borderRadius: 20,
-  marginRight: 10,
+  width: Platform.select({
+    ios: 36,
+    android: 36,
+    default: 40
+  }),
+  height: Platform.select({
+    ios: 36,
+    android: 36,
+    default: 40
+  }),
+  borderRadius: Platform.select({
+    ios: 18,
+    android: 18,
+    default: 20
+  }),
+  marginRight: Platform.select({
+    ios: 8,
+    android: 8,
+    default: 10
+  }),
   borderWidth: 1,
   borderColor: "#ddd",
 }
@@ -189,16 +218,102 @@ const $selectedColorCircle: ViewStyle = {
   borderColor: "#000",
 }
 
-const $button: ViewStyle = {
-  backgroundColor: "#007bff",
-  paddingVertical: 10,
-  paddingHorizontal: 30,
-  borderRadius: 5,
-  marginTop: 20,
+const $buttonContainer: ViewStyle = {
+  flexDirection: "row",
+  justifyContent: "center",
+  width: Platform.select({
+    ios: "100%",
+    android: "100%",
+    default: "10%"
+  }),
 }
 
-const $buttonText: TextStyle = {
+const $addButton: ViewStyle = {
+  backgroundColor: "#007bff",
+  paddingVertical: Platform.select({
+    ios: 8,
+    android: 8,
+    default: 10
+  }),
+  height: Platform.select({
+    ios: 36,
+    android: 36,
+    default: 40
+  }),
+  paddingHorizontal: Platform.select({
+    ios: 16,
+    android: 16,
+    default: 20
+  }),
+  width: Platform.select({
+    ios: 170,
+    android: 170,
+    default: 190
+  }),
+  borderRadius: 5,
+  marginTop: Platform.select({
+    ios: 16,
+    android: 16,
+    default: 20
+  }),
+  marginHorizontal: Platform.select({
+    ios: 4,
+    android: 4,
+    default: 6
+  }),
+}
+
+const $cancelButton: ViewStyle = {
+  backgroundColor: colors.unclickable,
+  paddingVertical: Platform.select({
+    ios: 8,
+    android: 8,
+    default: 10
+  }),
+  height: Platform.select({
+    ios: 36,
+    android: 36,
+    default: 40
+  }),
+  paddingHorizontal: Platform.select({
+    ios: 16,
+    android: 16,
+    default: 20
+  }),
+  width: Platform.select({
+    ios: 90,
+    android: 90,
+    default: 100
+  }),
+  borderRadius: 5,
+  marginTop: Platform.select({
+    ios: 16,
+    android: 16,
+    default: 20
+  }),
+  marginHorizontal: Platform.select({
+    ios: 4,
+    android: 4,
+    default: 6
+  }),
+}
+
+const $addButtonText: TextStyle = {
   color: "white",
-  fontSize: 16,
+  fontSize: Platform.select({
+    ios: 14,
+    android: 14,
+    default: 16
+  }),
+  textAlign: "center",
+}
+
+const $cancelButtonText: TextStyle = {
+  color: "black",
+  fontSize: Platform.select({
+    ios: 14,
+    android: 14,
+    default: 16
+  }),
   textAlign: "center",
 }

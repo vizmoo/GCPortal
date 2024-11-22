@@ -9,3 +9,4 @@ export * from "./ErrorScreen/ErrorBoundary"
 // export other screens here
 export * from "./PlayerSelectionScreen"
 export * from "./AddPlayerScreen"
+export * from "./DashboardScreen"

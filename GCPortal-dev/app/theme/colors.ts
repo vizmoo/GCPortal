@@ -43,6 +43,13 @@ const palette = {
   darkWhite: '#EAEEF1', // lol
   plainBlack: '#000000',
   darkGrey: '#8D8D8D',
+
+  // temporary 
+  profilePurple: "#9D85FF",
+  profileGreen: "#05C756",
+  profileBlue: "#1B9AAA",
+  profileRed: "#EF476F",
+  profileYellow: "#FFC43D"
 } as const
 
 export const colors = {
@@ -93,4 +100,17 @@ export const colors = {
    */
   errorBackground: palette.angry100,
   secondaryAccent: palette.yellowAccent,
+  /**
+     * Unclickable object/text
+     */
+  unclickable: palette.neutral300,
+  /**
+   * Profile colors also temporary
+   */
+  profileColors: [
+    palette.profileBlue, 
+    palette.profileGreen, 
+    palette.profilePurple,
+    palette.profileRed,
+    palette.profileYellow]
 } as const
